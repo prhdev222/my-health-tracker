@@ -58,6 +58,7 @@ AppData/
 *.json
 !eas.json
 !package.json
+!app.json
 *.tmp
 *.temp
 *.png
