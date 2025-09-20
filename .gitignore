@@ -61,7 +61,7 @@ AppData/
 !app.json
 *.tmp
 *.temp
-*.png
+!assets/*.png
 
 # Chrome
 AppData/Local/Google/Chrome/
