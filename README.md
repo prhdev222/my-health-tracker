@@ -155,3 +155,7 @@ MIT License - ดูรายละเอียดในไฟล์ [LICENSE](L
 ---
 
 **หมายเหตุ**: แอปนี้เหมาะสำหรับการติดตามข้อมูลสุขภาพส่วนตัว ไม่ควรใช้แทนการปรึกษาแพทย์
+
+## Build Status
+- Android production build ready
+- Triggering build for Google Play Store
