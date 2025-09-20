@@ -37,6 +37,7 @@ yarn-error.*
 
 # EAS
 .easignore
+# eas.json should NOT be ignored
 
 # Temporary files
 *.tmp
@@ -55,6 +56,8 @@ Thumbs.db
 AppData/
 *.ldb
 *.json
+!eas.json
+!package.json
 *.tmp
 *.temp
 *.png
