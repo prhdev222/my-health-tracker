@@ -65,12 +65,33 @@ export default function HomeScreen({}: HomeScreenProps) {
   // ตั้งค่าวันที่และเวลาปัจจุบัน
   const [currentDate, setCurrentDate] = useState('');
   const [currentTime, setCurrentTime] = useState('');
+  const [isEditingTime, setIsEditingTime] = useState(false);
 
   useEffect(() => {
+    updateDateTime();
+  }, []);
+
+  // ฟังก์ชันอัปเดตวันที่และเวลา
+  const updateDateTime = () => {
     const now = new Date();
     setCurrentDate(now.toISOString().split('T')[0]);
     setCurrentTime(now.toTimeString().split(' ')[0].substring(0, 5));
-  }, []);
+  };
+
+  // ฟังก์ชันแก้ไขเวลา
+  const handleTimeEdit = () => {
+    setIsEditingTime(true);
+  };
+
+  // ฟังก์ชันยืนยันการแก้ไขเวลา
+  const handleTimeConfirm = () => {
+    setIsEditingTime(false);
+  };
+
+  // ฟังก์ชันรีเฟรชเวลา
+  const handleRefreshTime = () => {
+    updateDateTime();
+  };
 
   const validateInput = (): boolean => {
     const hasBP = systolic.trim() && diastolic.trim();
@@ -142,6 +163,7 @@ export default function HomeScreen({}: HomeScreenProps) {
 
     setIsLoading(true);
     try {
+      // ใช้เวลาที่ผู้ใช้แก้ไข (หรือเวลาปัจจุบันถ้าไม่ได้แก้ไข)
       const newRecord: Omit<HealthRecord, 'id' | 'createdAt' | 'updatedAt'> = {
         systolic: systolic.trim() ? parseInt(systolic) : undefined,
         diastolic: diastolic.trim() ? parseInt(diastolic) : undefined,
@@ -173,6 +195,9 @@ export default function HomeScreen({}: HomeScreenProps) {
             setBloodSugarTime('');
             setBpTime('');
             setNotes('');
+            
+            // อัปเดตเวลาบนหน้าจอ
+            updateDateTime();
           }
         }
       ]);
@@ -375,8 +400,35 @@ export default function HomeScreen({}: HomeScreenProps) {
         <View style={styles.formContainer}>
           {/* วันที่และเวลา */}
           <View style={styles.dateTimeContainer}>
-            <Text style={styles.label}>วันที่: {currentDate}</Text>
-            <Text style={styles.label}>เวลา: {currentTime}</Text>
+            <View style={styles.dateTimeRow}>
+              <Text style={styles.label}>วันที่: {currentDate}</Text>
+              <TouchableOpacity onPress={handleRefreshTime} style={styles.refreshButton}>
+                <Text style={styles.refreshButtonText}>🔄</Text>
+              </TouchableOpacity>
+            </View>
+            <View style={styles.dateTimeRow}>
+              <Text style={styles.label}>เวลา: </Text>
+              {isEditingTime ? (
+                <View style={styles.timeEditContainer}>
+                  <TextInput
+                    style={styles.timeInput}
+                    value={currentTime}
+                    onChangeText={setCurrentTime}
+                    placeholder="HH:MM"
+                    keyboardType="numeric"
+                    maxLength={5}
+                  />
+                  <TouchableOpacity onPress={handleTimeConfirm} style={styles.confirmTimeButton}>
+                    <Text style={styles.confirmTimeButtonText}>✓</Text>
+                  </TouchableOpacity>
+                </View>
+              ) : (
+                <TouchableOpacity onPress={handleTimeEdit} style={styles.timeDisplayContainer}>
+                  <Text style={styles.timeDisplayText}>{currentTime}</Text>
+                  <Text style={styles.editTimeText}>แก้ไข</Text>
+                </TouchableOpacity>
+              )}
+            </View>
           </View>
 
           {/* ความดันโลหิต */}
@@ -568,12 +620,68 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   dateTimeContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
     marginBottom: 20,
     paddingBottom: 15,
     borderBottomWidth: 1,
     borderBottomColor: '#e0e0e0',
+  },
+  dateTimeRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  refreshButton: {
+    backgroundColor: '#f0f0f0',
+    borderRadius: 15,
+    padding: 8,
+    marginLeft: 10,
+  },
+  refreshButtonText: {
+    fontSize: 16,
+  },
+  timeEditContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  timeInput: {
+    borderWidth: 1,
+    borderColor: '#ddd',
+    borderRadius: 8,
+    padding: 8,
+    fontSize: 16,
+    backgroundColor: '#fafafa',
+    width: 80,
+    textAlign: 'center',
+  },
+  confirmTimeButton: {
+    backgroundColor: '#4CAF50',
+    borderRadius: 15,
+    padding: 8,
+    marginLeft: 8,
+  },
+  confirmTimeButtonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  timeDisplayContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#f0f0f0',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 8,
+  },
+  timeDisplayText: {
+    fontSize: 16,
+    color: '#333',
+    marginRight: 8,
+  },
+  editTimeText: {
+    fontSize: 12,
+    color: '#2196F3',
+    fontWeight: '500',
   },
   label: {
     fontSize: 16,

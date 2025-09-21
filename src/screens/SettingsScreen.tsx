@@ -13,14 +13,14 @@ import {
   Switch,
   ScrollView,
 } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import { databaseService } from '../database/database';
 import { UserSettings } from '../database/schema';
 
-interface SettingsScreenProps {
-  onNavigateToHome: () => void;
-}
+interface SettingsScreenProps {}
 
-export default function SettingsScreen({ onNavigateToHome }: SettingsScreenProps) {
+export default function SettingsScreen({}: SettingsScreenProps) {
+  const navigation = useNavigation();
   // ข้อมูลผู้ป่วย
   const [patientFirstName, setPatientFirstName] = useState('');
   const [patientLastName, setPatientLastName] = useState('');
@@ -180,7 +180,7 @@ export default function SettingsScreen({ onNavigateToHome }: SettingsScreenProps
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity style={styles.backButton} onPress={onNavigateToHome}>
+        <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
           <Text style={styles.backButtonText}>← กลับ</Text>
         </TouchableOpacity>
         <Text style={styles.title}>การตั้งค่า</Text>
